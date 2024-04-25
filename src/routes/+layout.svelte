@@ -87,7 +87,7 @@
 <div class="container h-full mx-auto">
 
 	{#if servidor}
-		<h1>{servidor.name}</h1>
+		<h1 class="h1">{servidor.name}</h1>
 	{/if}
 
 	
