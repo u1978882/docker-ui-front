@@ -84,44 +84,58 @@
 </script>
 
 
-<div class="container h-full mx-auto">
+<div class="main-container">
 
-	{#if servidor}
-		<h1 class="h1">{servidor.name}</h1>
-	{/if}
+	<div class="sidebar bg-surface-700">
+		<nav class="list-nav">
 
-	
-	<button on:click={() => {drawerStore.open(drawerSettings);}} type="button" class="btn variant-filled-primary">
-		<span>Open</span>
-	</button>
+			<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+			{#if servidor}
+				<!-- svelte-ignore a11y-click-events-have-key-events -->
+				<h1 on:click={() => {drawerStore.open(drawerSettings)}} class="h1 m-2 clicable">{servidor.name}</h1>
+			{/if}
+			<ul>
+				<li>
+					<a href="/Containers">
+						<span class="flex-auto">Containers</span>
+					</a>
+				</li>
+				<li>
+					<a href="/Images">
+						<span class="flex-auto">Images</span>
+					</a>
+				</li>
+				<li>
+					<a href="/Volumes">
+						<span class="flex-auto">Volumes</span>
+					</a>
+				</li>
+			</ul>
+		</nav>
+	</div>
 
-	
-	<nav class="list-nav">
-		<!-- (optionally you can provide a label here) -->
-		<ul>
-			<li>
-				<a href="/Containers">
-					<span class="flex-auto">Containers</span>
-				</a>
-			</li>
-			<li>
-				<a href="/Images">
-					<span class="flex-auto">Images</span>
-				</a>
-			</li>
-			<li>
-				<a href="/Volumes">
-					<span class="flex-auto">Volumes</span>
-				</a>
-			</li>
-		</ul>
-	</nav>
-
+	<div class="content bg-surface-500">
+		<slot />
+	</div>
 </div>
 
-<slot />
 <Drawer>
 	{#if $drawerStore.id === 'servers'}
 		<ModalServers />
 	{/if}
 </Drawer>
+
+<style>
+	.main-container{
+		display: flex;
+	}
+	.content {
+		flex: 1;
+		padding: 10px;
+	}
+	.sidebar {
+		width: 400px;
+		padding: 10px;
+		height: 100vh;
+	}
+</style>

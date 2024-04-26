@@ -1,9 +1,9 @@
 <!-- YOU CAN DELETE EVERYTHING IN THIS PAGE -->
 <section>
-	<h1 class="h1">
+	<h1 class="h1 mb-2">
 		Images
 	</h1>
-	<button on:click={() => {llistaImatges()}} type="button" class="btn variant-filled-primary">
+	<button on:click={() => {llistaImatges()}} type="button" class="btn variant-filled-primary mb-4">
 		<span>Llista Imatges</span>
 	</button>
 
@@ -17,8 +17,10 @@
 					<th>Repository</th>
 					<th>Tag</th>
 					<th>Image Id</th>
+					<!--
 					<th>created</th>
 					<th>size</th>
+					-->
 				</tr>
 			</thead>
 			<tbody>
@@ -27,8 +29,10 @@
 						<td>{row.repository}</td>
 						<td>{row.tag}</td>
 						<td>{row.image_id}</td>
+						<!--
 						<td>{row.created}</td>
 						<td>{row.size}</td>
+						-->
 					</tr>
 				{/each}
 			</tbody>
@@ -70,6 +74,8 @@
 				} catch (error) {
 					console.error("Error al parsear JSON:", error);
 				}
+			}).catch(() => {
+				list = [];
 			});
 		}
 	}

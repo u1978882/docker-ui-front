@@ -4,8 +4,8 @@ export const docker = {
 	name: 'docker',
 	properties: {
 		// =~= Theme Properties =~=
-		"--theme-font-family-base": `system-ui`,
-		"--theme-font-family-heading": `system-ui`,
+		"--theme-font-family-base": `Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'`,
+		"--theme-font-family-heading": `ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace`,
 		"--theme-font-color-base": "0 0 0",
 		"--theme-font-color-dark": "255 255 255",
 		"--theme-rounded-base": "9999px",
@@ -31,28 +31,28 @@ export const docker = {
 		"--color-primary-700": "10 137 178", // #0a89b2
 		"--color-primary-800": "8 110 142", // #086e8e
 		"--color-primary-900": "6 90 116", // #065a74
-		// secondary | #eaba75 
-		"--color-secondary-50": "252 245 234", // #fcf5ea
-		"--color-secondary-100": "251 241 227", // #fbf1e3
-		"--color-secondary-200": "250 238 221", // #faeedd
-		"--color-secondary-300": "247 227 200", // #f7e3c8
-		"--color-secondary-400": "240 207 158", // #f0cf9e
-		"--color-secondary-500": "234 186 117", // #eaba75
-		"--color-secondary-600": "211 167 105", // #d3a769
-		"--color-secondary-700": "176 140 88", // #b08c58
-		"--color-secondary-800": "140 112 70", // #8c7046
-		"--color-secondary-900": "115 91 57", // #735b39
-		// tertiary | #7a5fdd 
-		"--color-tertiary-50": "235 231 250", // #ebe7fa
-		"--color-tertiary-100": "228 223 248", // #e4dff8
-		"--color-tertiary-200": "222 215 247", // #ded7f7
-		"--color-tertiary-300": "202 191 241", // #cabff1
-		"--color-tertiary-400": "162 143 231", // #a28fe7
-		"--color-tertiary-500": "122 95 221", // #7a5fdd
-		"--color-tertiary-600": "110 86 199", // #6e56c7
-		"--color-tertiary-700": "92 71 166", // #5c47a6
-		"--color-tertiary-800": "73 57 133", // #493985
-		"--color-tertiary-900": "60 47 108", // #3c2f6c
+		// secondary | #905809 
+		"--color-secondary-50": "238 230 218", // #eee6da
+		"--color-secondary-100": "233 222 206", // #e9dece
+		"--color-secondary-200": "227 213 194", // #e3d5c2
+		"--color-secondary-300": "211 188 157", // #d3bc9d
+		"--color-secondary-400": "177 138 83", // #b18a53
+		"--color-secondary-500": "144 88 9", // #905809
+		"--color-secondary-600": "130 79 8", // #824f08
+		"--color-secondary-700": "108 66 7", // #6c4207
+		"--color-secondary-800": "86 53 5", // #563505
+		"--color-secondary-900": "71 43 4", // #472b04
+		// tertiary | #706b85 
+		"--color-tertiary-50": "234 233 237", // #eae9ed
+		"--color-tertiary-100": "226 225 231", // #e2e1e7
+		"--color-tertiary-200": "219 218 225", // #dbdae1
+		"--color-tertiary-300": "198 196 206", // #c6c4ce
+		"--color-tertiary-400": "155 151 170", // #9b97aa
+		"--color-tertiary-500": "112 107 133", // #706b85
+		"--color-tertiary-600": "101 96 120", // #656078
+		"--color-tertiary-700": "84 80 100", // #545064
+		"--color-tertiary-800": "67 64 80", // #434050
+		"--color-tertiary-900": "55 52 65", // #373441
 		// success | #a6ed92 
 		"--color-success-50": "242 252 239", // #f2fcef
 		"--color-success-100": "237 251 233", // #edfbe9
@@ -97,6 +97,5 @@ export const docker = {
 		"--color-surface-700": "42 58 63", // #2a3a3f
 		"--color-surface-800": "34 46 50", // #222e32
 		"--color-surface-900": "27 38 41", // #1b2629
-		
 	}
 }
