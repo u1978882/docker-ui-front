@@ -92,7 +92,7 @@
 			<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 			{#if servidor}
 				<!-- svelte-ignore a11y-click-events-have-key-events -->
-				<h1 on:click={() => {drawerStore.open(drawerSettings)}} class="h1 m-2 clicable">{servidor.name}</h1>
+				<h1 on:click={() => {drawerStore.open(drawerSettings)}} class="h1 m-2 clikable">{servidor.name}</h1>
 			{/if}
 			<ul>
 				<li>
