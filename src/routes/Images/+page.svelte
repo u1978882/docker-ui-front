@@ -20,22 +20,18 @@
 					<th>Repository</th>
 					<th>Tag</th>
 					<th>Image Id</th>
-					<!--
-					<th>created</th>
-					<th>size</th>
-					-->
+					<th>Created Since</th>
+					<th>Size</th>
 				</tr>
 			</thead>
 			<tbody>
 				{#each list as row, i}
 					<tr>
-						<td>{row.repository}</td>
-						<td>{row.tag}</td>
-						<td>{row.image_id}</td>
-						<!--
-						<td>{row.created}</td>
-						<td>{row.size}</td>
-						-->
+						<td>{row.Repository}</td>
+						<td>{row.Tag}</td>
+						<td>{row.ID}</td>
+						<td>{row.CreatedSince}</td>
+						<td>{row.Size}</td>
 					</tr>
 				{/each}
 			</tbody>
@@ -72,7 +68,7 @@
 				console.log(llista)
 				try {
 					var jsonObject = JSON.parse(llista);
-					list = jsonObject;
+					list = jsonObject.images;
 					console.log("llista", jsonObject);
 				} catch (error) {
 					console.error("Error al parsear JSON:", error);

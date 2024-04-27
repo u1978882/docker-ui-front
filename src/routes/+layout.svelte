@@ -9,7 +9,7 @@
 	import javascript from 'highlight.js/lib/languages/javascript';
 	import typescript from 'highlight.js/lib/languages/typescript';
 
-	import { initializeStores, Drawer } from '@skeletonlabs/skeleton';
+	import { initializeStores, Drawer, Modal } from '@skeletonlabs/skeleton';
 	initializeStores();
 
 	hljs.registerLanguage('xml', xml); // for HTML
@@ -29,7 +29,7 @@
 
 	import { servidorActual, setServidorActual } from '../stores.js';
 	import PocketBase from 'pocketbase';
-	import { onMount } from "svelte";
+	import { onMount, onDestroy } from "svelte";
 	import { setServers, servers } from "../stores.js";
 
 	let servidor;
@@ -66,8 +66,6 @@
 		});
 
 		pb.collection('server').subscribe('*', function (e) {
-			console.log(e.action);
-			console.log(e.record);
 			let servidorsCopia = servidors;
 			if (e.action == "create") {
 				servidorsCopia.push(e.record);
@@ -78,8 +76,21 @@
 				servidorsCopia = servidorsCopia.filter(server => server.id !== e.record.id);
 			}
 			setServers(servidorsCopia);
+			console.log(servidor)
 		});
 	})
+
+	onDestroy(() => {
+		pb.collection('server').unsubscribe('*');
+	})
+
+	import formulariCrearServidor from '../components/formulariCrearServidor.svelte'
+
+	const modalRegistry = {
+		// Set a unique modal ID, then pass the component reference
+		crearServidor: { ref: formulariCrearServidor },
+		// ...
+	};
 
 </script>
 
@@ -124,6 +135,9 @@
 		<ModalServers />
 	{/if}
 </Drawer>
+
+<Modal components={modalRegistry} />
+
 
 <style>
 	.main-container{

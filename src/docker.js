@@ -8,11 +8,11 @@ export const docker = {
 		"--theme-font-family-heading": `ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace`,
 		"--theme-font-color-base": "0 0 0",
 		"--theme-font-color-dark": "255 255 255",
-		"--theme-rounded-base": "9999px",
+		"--theme-rounded-base": "6px",
 		"--theme-rounded-container": "8px",
 		"--theme-border-base": "1px",
 		// =~= Theme On-X Colors =~=
-		"--on-primary": "0 0 0",
+		"--on-primary": "255 255 255",
 		"--on-secondary": "0 0 0",
 		"--on-tertiary": "255 255 255",
 		"--on-success": "0 0 0",
@@ -97,5 +97,6 @@ export const docker = {
 		"--color-surface-700": "42 58 63", // #2a3a3f
 		"--color-surface-800": "34 46 50", // #222e32
 		"--color-surface-900": "27 38 41", // #1b2629
+		
 	}
 }
