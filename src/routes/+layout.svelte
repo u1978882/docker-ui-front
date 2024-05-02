@@ -8,8 +8,10 @@
 	import css from 'highlight.js/lib/languages/css';
 	import javascript from 'highlight.js/lib/languages/javascript';
 	import typescript from 'highlight.js/lib/languages/typescript';
-
+	import { Accordion, AccordionItem } from '@skeletonlabs/skeleton';
 	import { initializeStores, Drawer, Modal } from '@skeletonlabs/skeleton';
+	import {page} from '$app/stores'
+
 	initializeStores();
 
 	hljs.registerLanguage('xml', xml); // for HTML
@@ -32,6 +34,10 @@
 	import { onMount, onDestroy } from "svelte";
 	import { setServers, servers } from "../stores.js";
 
+	import { getModalStore } from '@skeletonlabs/skeleton';
+    const modalStore = getModalStore();
+	
+
 	let servidor;
 	const unsubscribe = servidorActual.subscribe(value => {
 		servidor = value;
@@ -41,6 +47,13 @@
 	const unsubscribeServers = servers.subscribe(value => {
 		servidors = value;
 	});
+
+	let acordion
+	$: tencarAcordio(servidor)
+	function tencarAcordio(servidor) {
+		console.log("tencant acordio")
+		acordion = false
+	}
 
 
 	const drawerSettings = {
@@ -54,14 +67,19 @@
 	const pb = new PocketBase('http://127.0.0.1:8090');
 
 	onMount(() => {
-		if(!servidor){
-			drawerStore.open(drawerSettings);
-		}
+		console.log($page.url.pathname);
+
 		pb.collection('server').getFullList({
 			sort: '-created',
 		}).then((rec) => {
 			setServers(rec);
-
+			if(rec.length == 0){
+				modalStore.trigger({type: 'component',component: 'crearServidor'});
+			}
+			else
+			{
+				setServidorActual(rec[0]);
+			}
 			console.log(servidors);
 		});
 
@@ -78,6 +96,7 @@
 			setServers(servidorsCopia);
 			console.log(servidor)
 		});
+
 	})
 
 	onDestroy(() => {
@@ -97,35 +116,90 @@
 
 <div class="main-container">
 
-	<div class="sidebar bg-surface-700">
-		<nav class="list-nav">
+	<div class="sidebar bg-surface-900 shadow-md">
+		<div class="flex flex-col w-full h-full">
+			<div class="flex-none">
+				<nav class="list-nav">
+					<ul>
+						<li>
+							<a href="/Containers" class={$page.url.pathname == "/Containers" ? "bg-primary-900" : ""}>
+								<span class="badge p-2">
+									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box2-fill" viewBox="0 0 16 16">
+										<path d="M3.75 0a1 1 0 0 0-.8.4L.1 4.2a.5.5 0 0 0-.1.3V15a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V4.5a.5.5 0 0 0-.1-.3L13.05.4a1 1 0 0 0-.8-.4zM15 4.667V5H1v-.333L1.5 4h6V1h1v3h6z"/>
+									  </svg>
+								</span>
+								<span class="flex-auto">
+									<dt>Containers</dt>
+								</span>
+							</a>
+						</li>
+						<li>
+							<a href="/Images" class={$page.url.pathname == "/Images" ? "bg-primary-900" : ""}>
+								<span class="badge p-2">
+									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box2" viewBox="0 0 16 16">
+										<path d="M2.95.4a1 1 0 0 1 .8-.4h8.5a1 1 0 0 1 .8.4l2.85 3.8a.5.5 0 0 1 .1.3V15a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V4.5a.5.5 0 0 1 .1-.3zM7.5 1H3.75L1.5 4h6zm1 0v3h6l-2.25-3zM15 5H1v10h14z"/>
+									  </svg>
+								</span>
+								<span class="flex-auto">
+									<dt>Imatges</dt>
+								</span>
+							</a>
+						</li>
+						<li>
+							<a href="/Volumes" class={$page.url.pathname == "/Volumes" ? "bg-primary-900" : ""}>
+								<span class="badge p-2">
+									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-hdd" viewBox="0 0 16 16">
+										<path d="M4.5 11a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1M3 10.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0"/>
+										<path d="M16 11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V9.51c0-.418.105-.83.305-1.197l2.472-4.531A1.5 1.5 0 0 1 4.094 3h7.812a1.5 1.5 0 0 1 1.317.782l2.472 4.53c.2.368.305.78.305 1.198zM3.655 4.26 1.592 8.043Q1.79 8 2 8h12q.21 0 .408.042L12.345 4.26a.5.5 0 0 0-.439-.26H4.094a.5.5 0 0 0-.44.26zM1 10v1a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-1a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1"/>
+									  </svg>
+								</span>
+								<span class="flex-auto">
+									<dt>Volumes</dt>
+								</span>
+							</a>
+						</li>
+					</ul>
+				</nav>
+			</div>
+			<div class="grow">
+			  
+			</div>
+			<div class="flex-none">
+				<hr class="!border-t-1 mb-2" />
+				<Accordion bind:open={acordion}>
+					<AccordionItem>
+						<svelte:fragment slot="lead">								
+							<span class="badge bg-primary-500 p-2 variant-ghost">
+							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-hdd-network" viewBox="0 0 16 16">
+								<path d="M4.5 5a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1M3 4.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0"/>
+								<path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v1a2 2 0 0 1-2 2H8.5v3a1.5 1.5 0 0 1 1.5 1.5h5.5a.5.5 0 0 1 0 1H10A1.5 1.5 0 0 1 8.5 14h-1A1.5 1.5 0 0 1 6 12.5H.5a.5.5 0 0 1 0-1H6A1.5 1.5 0 0 1 7.5 10V7H2a2 2 0 0 1-2-2zm1 0v1a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1m6 7.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5"/>
+							</svg>
+						</span>
+						</svelte:fragment>
+						<svelte:fragment slot="summary">
+							<span class="flex-auto">
+								{#if servidor}
+									<h4 class="h4 font-bold">{servidor.name}</h4>
+									<dd class="text-sm opacity-50">{servidor.ip}</dd>
+								{:else}
+									<h4 class="font-bold h4">Add a new server</h4>
+								{/if}
+							</span>
+						</svelte:fragment>
+						<svelte:fragment slot="content">
+							<nav class="list-nav">
+							<ModalServers/>
+							</nav>
+						</svelte:fragment>
+					</AccordionItem>
+				</Accordion>
 
-			<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-			{#if servidor}
-				<!-- svelte-ignore a11y-click-events-have-key-events -->
-				<h1 on:click={() => {drawerStore.open(drawerSettings)}} class="h1 m-2 clikable">{servidor.name}</h1>
-			{/if}
-			<ul>
-				<li>
-					<a href="/Containers">
-						<span class="flex-auto">Containers</span>
-					</a>
-				</li>
-				<li>
-					<a href="/Images">
-						<span class="flex-auto">Images</span>
-					</a>
-				</li>
-				<li>
-					<a href="/Volumes">
-						<span class="flex-auto">Volumes</span>
-					</a>
-				</li>
-			</ul>
-		</nav>
+			</div>
+		  </div>
+		
 	</div>
 
-	<div class="content bg-surface-500">
+	<div class="content p-5">
 		<slot />
 	</div>
 </div>
@@ -145,7 +219,6 @@
 	}
 	.content {
 		flex: 1;
-		padding: 10px;
 	}
 	.sidebar {
 		width: 400px;

@@ -1,6 +1,5 @@
-<section class="p-4">
+<section class="">
     <nav class="list-nav">
-        <h1 class="h1 mb-4 ml-4">Servidors</h1>
         <ul>
             {#each servidors as server (server)}
             <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -9,14 +8,14 @@
                 <!-- svelte-ignore missing-declaration -->
                 <!-- svelte-ignore a11y-missing-attribute -->
                 <!-- svelte-ignore a11y-click-events-have-key-events -->
-                <a class={esServidorSeleccionat(server) ? "bg-primary-900" : ""}>
-                    <span on:click={() => {setServidorActual(server); drawerStore.close()}} class="badge bg-primary-500 p-2 {esServidorSeleccionat(server) ? "" : "variant-ghost"}">
+                <a class={servidor.id == server.id ? "bg-primary-900" : ""}>
+                    <span on:click={() => {setServidorActual(server);}} class="badge bg-primary-500 p-2 {servidor.id == server.id ? "" : "variant-ghost"}">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-hdd-network" viewBox="0 0 16 16">
                             <path d="M4.5 5a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1M3 4.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0"/>
                             <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v1a2 2 0 0 1-2 2H8.5v3a1.5 1.5 0 0 1 1.5 1.5h5.5a.5.5 0 0 1 0 1H10A1.5 1.5 0 0 1 8.5 14h-1A1.5 1.5 0 0 1 6 12.5H.5a.5.5 0 0 1 0-1H6A1.5 1.5 0 0 1 7.5 10V7H2a2 2 0 0 1-2-2zm1 0v1a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1m6 7.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5"/>
                         </svg>
                     </span>
-                    <span on:click={() => {setServidorActual(server); drawerStore.close()}} class="flex-auto">
+                    <span on:click={() => {setServidorActual(server);}} class="flex-auto">
                         <dt class="font-bold">{server.name}</dt>
                         <dd class="text-sm opacity-50">{server.ip}</dd>
                     </span>
@@ -40,11 +39,11 @@
             </li>
             {/each}
             <li>
-                <button on:click={() => {modalStore.trigger({type: 'component',component: 'crearServidor',})}} type="button" class="btn variant-filled-primary mt-2">
+                <button on:click={() => {modalStore.trigger({type: 'component',component: 'crearServidor'})}} type="button" class="btn variant-filled-primary mt-4">
                     <span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-cloud-plus-fill" viewBox="0 0 16 16">
-                            <path d="M8 2a5.53 5.53 0 0 0-3.594 1.342c-.766.66-1.321 1.52-1.464 2.383C1.266 6.095 0 7.555 0 9.318 0 11.366 1.708 13 3.781 13h8.906C14.502 13 16 11.57 16 9.773c0-1.636-1.242-2.969-2.834-3.194C12.923 3.999 10.69 2 8 2m.5 4v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 1 0"/>
-                          </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
+                            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+                        </svg>
                     </span>
                     <span>Add</span>
                 </button>
@@ -56,7 +55,7 @@
 
 <script>
     import { flip } from 'svelte/animate';
-    import { servidorActual, setServidorActual, servers } from '../stores.js';
+    import { servidorActual, setServidorActual, servers, setServers } from '../stores.js';
 	import { getDrawerStore } from "@skeletonlabs/skeleton";
     import PocketBase from 'pocketbase';
     import { getModalStore } from '@skeletonlabs/skeleton';
@@ -74,12 +73,6 @@
     const unsubscribeServidors = servers.subscribe(value => {
         servidors = value;
     });
-
-    function esServidorSeleccionat(server){
-        if(servidor)
-            return servidor.id == server.id;
-        return false
-    }
 
     const popupFeatured = {
         // Represents the type of event that opens/closed the popup

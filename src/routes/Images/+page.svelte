@@ -50,7 +50,9 @@
 	import { onMount } from "svelte";
 	import { servidorActual } from '../../stores';
 	import { ProgressRadial } from '@skeletonlabs/skeleton';
+	import { getToastStore } from '@skeletonlabs/skeleton';
 
+	const toastStore = getToastStore();
 
 	let servidor;
 	const unsubscribe = servidorActual.subscribe(value => {

@@ -20,6 +20,7 @@
     "@tailwindcss/forms": "0.5.7",
     "@tailwindcss/typography": "0.5.12",
     "@types/eslint": "^8.56.0",
+    "@vincjo/datatables": "^1.14.5",
     "autoprefixer": "10.4.19",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",

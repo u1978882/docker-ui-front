@@ -53,7 +53,7 @@
                             <input bind:value={password} class="input variant-form-material" type="password" placeholder="Enter password..." required>
                         </label> 
                         <label class="label">
-                            <span>*Repeat password {passwordRepeat}</span>
+                            <span>*Repeat password</span>
                             <input bind:value={passwordRepeat} class="{passwordClass()} input variant-form-material" type="password" placeholder="Repeat password..." required>
                         </label> 
                     </div>
