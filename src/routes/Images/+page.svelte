@@ -3,11 +3,15 @@
 	<h1 class="h1 mb-2">
 		Images
 	</h1>
-	<button on:click={() => {llistaImatges()}} type="button" class="btn variant-filled-primary mb-4 p-2">
+	<button on:click={() => {llistaImatges(servidor)}} type="button" class="btn variant-filled-primary mb-4 p-2">
+		{#if loading}
+			<ProgressRadial width={'w-5'} value={undefined} />
+		{:else}
 			<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
 				<path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z"/>
 				<path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466"/>
-			  </svg>
+			</svg>
+		{/if}
 	</button>
 
 	
@@ -45,6 +49,8 @@
 	import PocketBase from 'pocketbase';
 	import { onMount } from "svelte";
 	import { servidorActual } from '../../stores';
+	import { ProgressRadial } from '@skeletonlabs/skeleton';
+
 
 	let servidor;
 	const unsubscribe = servidorActual.subscribe(value => {
@@ -58,13 +64,17 @@
 	})
 
 	let list = [];
-
-	function llistaImatges() {
+	let loading = false;
+	$: llistaImatges(servidor);
+	function llistaImatges(servidor) {
 		if (servidor){
+			list = [];
+			loading = true;
 			pb.send("/functions/images/" + servidor.id, {
 				// for all possible options check
 				// https://developer.mozilla.org/en-US/docs/Web/API/fetch#options
 			}).then((llista) => {
+				loading = false;
 				console.log(llista)
 				try {
 					var jsonObject = JSON.parse(llista);
@@ -74,6 +84,7 @@
 					console.error("Error al parsear JSON:", error);
 				}
 			}).catch(() => {
+				loading = false;
 				list = [];
 			});
 		}
