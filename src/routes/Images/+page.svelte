@@ -1,5 +1,8 @@
 <!-- YOU CAN DELETE EVERYTHING IN THIS PAGE -->
 <section>
+	<ol class="breadcrumb mb-2">
+        <li>Images</li>
+    </ol>
 	<h1 class="h1 mb-2">
 		Images
 	</h1>

@@ -6,6 +6,8 @@
 	import { storeHighlightJs } from '@skeletonlabs/skeleton';
 	import xml from 'highlight.js/lib/languages/xml'; // for HTML
 	import css from 'highlight.js/lib/languages/css';
+	import yaml from 'highlight.js/lib/languages/yaml';
+	import dockerfile from 'highlight.js/lib/languages/dockerfile.js';
 	import javascript from 'highlight.js/lib/languages/javascript';
 	import typescript from 'highlight.js/lib/languages/typescript';
 	import { Accordion, AccordionItem } from '@skeletonlabs/skeleton';
@@ -14,6 +16,9 @@
 
 	initializeStores();
 
+    
+    hljs.registerLanguage('yaml', yaml);
+	hljs.registerLanguage('dockerfile', dockerfile);
 	hljs.registerLanguage('xml', xml); // for HTML
 	hljs.registerLanguage('css', css);
 	hljs.registerLanguage('javascript', javascript);
@@ -36,6 +41,8 @@
 
 	import { getModalStore } from '@skeletonlabs/skeleton';
     const modalStore = getModalStore();
+
+
 	
 
 	let servidor;
@@ -108,6 +115,7 @@
 	const modalRegistry = {
 		// Set a unique modal ID, then pass the component reference
 		crearServidor: { ref: formulariCrearServidor },
+
 		// ...
 	};
 
@@ -115,14 +123,14 @@
 
 
 <div class="main-container">
-
-	<div class="sidebar bg-surface-900 shadow-md">
+	<div class="sidebar"></div>
+	<div class="sidebar bg-surface-900 shadow-md real-sidebar">
 		<div class="flex flex-col w-full h-full">
 			<div class="flex-none">
 				<nav class="list-nav">
 					<ul>
 						<li>
-							<a href="/Containers" class={$page.url.pathname == "/Containers" ? "bg-primary-900" : ""}>
+							<a href="/Containers" class={$page.url.pathname.includes("/Containers")  ? "bg-primary-900" : ""}>
 								<span class="badge p-2">
 									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box2-fill" viewBox="0 0 16 16">
 										<path d="M3.75 0a1 1 0 0 0-.8.4L.1 4.2a.5.5 0 0 0-.1.3V15a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V4.5a.5.5 0 0 0-.1-.3L13.05.4a1 1 0 0 0-.8-.4zM15 4.667V5H1v-.333L1.5 4h6V1h1v3h6z"/>
@@ -134,7 +142,7 @@
 							</a>
 						</li>
 						<li>
-							<a href="/Images" class={$page.url.pathname == "/Images" ? "bg-primary-900" : ""}>
+							<a href="/Images" class={$page.url.pathname.includes("/Images") ? "bg-primary-900" : ""}>
 								<span class="badge p-2">
 									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box2" viewBox="0 0 16 16">
 										<path d="M2.95.4a1 1 0 0 1 .8-.4h8.5a1 1 0 0 1 .8.4l2.85 3.8a.5.5 0 0 1 .1.3V15a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V4.5a.5.5 0 0 1 .1-.3zM7.5 1H3.75L1.5 4h6zm1 0v3h6l-2.25-3zM15 5H1v10h14z"/>
@@ -146,7 +154,7 @@
 							</a>
 						</li>
 						<li>
-							<a href="/Volumes" class={$page.url.pathname == "/Volumes" ? "bg-primary-900" : ""}>
+							<a href="/Volumes" class={$page.url.pathname.includes("/Volumes") ? "bg-primary-900" : ""}>
 								<span class="badge p-2">
 									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-hdd" viewBox="0 0 16 16">
 										<path d="M4.5 11a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1M3 10.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0"/>
@@ -155,6 +163,19 @@
 								</span>
 								<span class="flex-auto">
 									<dt>Volumes</dt>
+								</span>
+							</a>
+						</li>
+						<li>
+							<a href="/Compose" class={$page.url.pathname.includes("/Compose") ? "bg-primary-900" : ""}>
+								<span class="badge p-2">
+									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-backpack" viewBox="0 0 16 16">
+										<path d="M4.04 7.43a4 4 0 0 1 7.92 0 .5.5 0 1 1-.99.14 3 3 0 0 0-5.94 0 .5.5 0 1 1-.99-.14M4 9.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5zm1 .5v3h6v-3h-1v.5a.5.5 0 0 1-1 0V10z"/>
+										<path d="M6 2.341V2a2 2 0 1 1 4 0v.341c2.33.824 4 3.047 4 5.659v5.5a2.5 2.5 0 0 1-2.5 2.5h-7A2.5 2.5 0 0 1 2 13.5V8a6 6 0 0 1 4-5.659M7 2v.083a6 6 0 0 1 2 0V2a1 1 0 0 0-2 0m1 1a5 5 0 0 0-5 5v5.5A1.5 1.5 0 0 0 4.5 15h7a1.5 1.5 0 0 0 1.5-1.5V8a5 5 0 0 0-5-5"/>
+									  </svg>
+								</span>
+								<span class="flex-auto">
+									<dt>Docker Compose</dt>
 								</span>
 							</a>
 						</li>
@@ -224,5 +245,8 @@
 		width: 400px;
 		padding: 10px;
 		height: 100vh;
+	}
+	.real-sidebar {
+		position: fixed;
 	}
 </style>

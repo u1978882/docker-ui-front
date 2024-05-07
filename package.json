@@ -36,7 +36,9 @@
   "type": "module",
   "dependencies": {
     "@floating-ui/dom": "1.6.3",
-    "highlight.js": "11.9.0",
-    "pocketbase": "^0.21.2"
+    "@valiantlynx/svelte-rich-text": "^0.2.8",
+    "highlight.js": "^11.9.0",
+    "pocketbase": "^0.21.2",
+    "svelte-table": "^0.6.3"
   }
 }
