@@ -74,21 +74,40 @@
                 {compose.name}
             </h1>
             <div class="grow"></div>
-            <button on:click={() => {runDockerCompose()}} type="button" class="btn variant-filled-primary p-3">
+            <button on:click={() => {delDockerCompose()}} type="button" class="btn variant-soft-error p-3 mr-2">
+                <span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                        <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+                        <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+                      </svg>
+                </span>
+                <span>
+                    Delete
+                </span>
+            </button>
+            <button on:click={() => {downDockerCompose()}} type="button" class="btn variant-soft-secondary p-3 mr-2">
+                <span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi bi-stop-fill" viewBox="0 0 16 16">
+                        <path d="M5 3.5h6A1.5 1.5 0 0 1 12.5 5v6a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 11V5A1.5 1.5 0 0 1 5 3.5"/>
+                      </svg>
+                </span>
+                <span>
+                    Down
+                </span>
+            </button>
+            <button on:click={() => {runDockerCompose()}} type="button" class="btn variant-soft-primary p-3">
                 <span>
                     <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi bi-play-fill" viewBox="0 0 16 16">
                         <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393"/>
                     </svg>
                 </span>
                 <span>
-                    Run
+                    Up
                 </span>
             </button>
         </div>
         <br>
-        <div>
-            {compose.description}
-        </div>
+        <div class="remove-all p-2" bind:innerHTML={compose.description} contenteditable="false"></div>
         <hr class="m-4">
         <section class="flex">
             <div class="flex-1 w-64 mr-2 h-full">
@@ -116,14 +135,24 @@
     import { page } from '$app/stores';
     import { getModalStore } from '@skeletonlabs/skeleton';
 	import { onMount } from 'svelte';
-    import PocketBase from 'pocketbase';
+    import { Toast, getToastStore } from '@skeletonlabs/skeleton';
     import { storeHighlightJs } from '@skeletonlabs/skeleton';
     import { CodeBlock } from '@skeletonlabs/skeleton';
+    import { pb } from '../../../../pocketbase'
+	import { goto } from '$app/navigation';
+    import { servidorActual } from '../../../../stores';
+
+    let servidor;
+	const unsubscribe = servidorActual.subscribe(value => {
+		servidor = value;
+	});
 
     let compose = {}
     let description
     let id
     let loading = true
+
+    const toastStore = getToastStore();
 
     onMount(() => {
         loading = true
@@ -135,7 +164,6 @@
         getDockerCompose()
     })
 
-    const pb = new PocketBase('http://127.0.0.1:8090');
     function getDockerCompose() {
         pb.collection('docker_compose').getOne(id, {
         }).then((record) => {
@@ -149,8 +177,89 @@
         });
     }
 
-    function runDockerCompose() {
-        window.location.href = "/Containers"
+    function runDockerCompose(compose) {
+		if (servidor){
+            const t = {
+                background: 'variant-soft-success',
+                message: 'Starting docker compose up',
+                hideDismiss: true,
+                timeout: 3000
+            };
+            toastStore.trigger(t);
+			pb.send("/functions/" + servidor.id + "/dockercompose/" + id + "/up", {
+				// for all possible options check
+				// https://developer.mozilla.org/en-US/docs/Web/API/fetch#options
+			}).then((resultat) => {
+				try {
+					console.log(resultat);
+					var jsonObject = JSON.parse(resultat);
+					if (jsonObject.stat == "ok") goto("/Containers")
+					else {
+						const t = {
+							background: 'variant-soft-error',
+                            hideDismiss: true,
+							message: 'Cannot start docker compose: ' + jsonObject.resultat,
+							timeout: 2000
+						};
+						toastStore.trigger(t);
+					}
+				} catch (error) {
+					console.error("Error al parsear JSON:", error);
+				}
+			}).catch((error, test) => {
+				console.log(test)
+			});
+		}
+	}
+
+    function downDockerCompose(compose) {
+		if (servidor){
+            const t = {
+                background: 'variant-soft-success',
+                message: 'Downing docker compose',
+                hideDismiss: true,
+                timeout: 3000
+            };
+            toastStore.trigger(t);
+			pb.send("/functions/" + servidor.id + "/dockercompose/" + id + "/down", {
+				// for all possible options check
+				// https://developer.mozilla.org/en-US/docs/Web/API/fetch#options
+			}).then((resultat) => {
+				try {
+					console.log(resultat);
+					var jsonObject = JSON.parse(resultat);
+					if (jsonObject.stat == "ok") goto("/Containers")
+					else {
+						const t = {
+							background: 'variant-soft-error',
+                            hideDismiss: true,
+							message: 'Cannot down docker compose: ' + jsonObject.resultat,
+							timeout: 2000
+						};
+						toastStore.trigger(t);
+					}
+				} catch (error) {
+					console.error("Error al parsear JSON:", error);
+				}
+			}).catch((error, test) => {
+				console.log(test)
+			});
+		}
+	}
+
+    function delDockerCompose() {
+        pb.collection('docker_compose').delete(id)
+        .then((record) => {
+            goto("/Compose")
+        }).catch(() => {
+            const t = {
+                background: 'variant-soft-error',
+                hideDismiss: true,
+                message: 'Cannot delete docker compose',
+                timeout: 2000
+            };
+            toastStore.trigger(t);
+        });
     }
 
 </script>

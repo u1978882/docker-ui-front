@@ -88,6 +88,7 @@
 	import { getModalStore, getDrawerStore } from "@skeletonlabs/skeleton";
     import { TabGroup, Tab, TabAnchor } from '@skeletonlabs/skeleton';
     import { servidorActual, setServidorActual, servers } from '../stores.js';
+    import { pb } from '../pocketbase'
 
     import PocketBase from 'pocketbase';
 
@@ -113,7 +114,6 @@
     }
 
     function submitServer() {
-        const pb = new PocketBase('http://127.0.0.1:8090');
         console.log("submiting")
         var data = {};
         if (password != undefined) {

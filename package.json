@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "dev": "vite dev",
+    "dev": "vite dev --host",
     "build": "vite build",
     "preview": "vite preview",
     "test": "playwright test",
@@ -37,7 +37,9 @@
   "dependencies": {
     "@floating-ui/dom": "1.6.3",
     "@valiantlynx/svelte-rich-text": "^0.2.8",
+    "@xterm/xterm": "^5.5.0",
     "highlight.js": "^11.9.0",
+    "js-yaml": "^4.1.0",
     "pocketbase": "^0.21.2",
     "svelte-table": "^0.6.3"
   }

@@ -6,11 +6,17 @@
 	<h1 class="h1 mb-2">
 		Containers
 	</h1>
-	<div class="flex p-2">
+	<div class="flex mb-2 mt-2">
 		<input bind:value={valorFiltre} class="input variant-form-material w-64" />
 		<div class="flex-auto">
 		</div>
-		<button on:click={() => {llistaContenidors(servidor)}} type="button" style="width:50px;" class="btn variant-filled-primary p-2">
+		<button on:click={() => {llistaContenidors(servidor)}} type="button" class="btn variant-soft-primary mr-3">
+			<span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16">
+				<path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2"/>
+			  </svg></span>
+			<span>New</span>
+		</button>
+		<button on:click={() => {llistaContenidors(servidor)}} type="button" style="width:50px;" class="btn variant-soft-secondary p-2">
 			{#if loading}
 				<ProgressRadial width={'w-5'} value={undefined}/>
 			{:else}
@@ -43,8 +49,8 @@
 				{#each list as row}
 					{#if row.Names.toLowerCase().includes(valorFiltre.toLowerCase()) || row.Status.toLowerCase().includes(valorFiltre.toLowerCase()) || row.Ports.toLowerCase().includes(valorFiltre.toLowerCase())}
 						<tr>
-							<td>{row.Names}</td>
-							<td style="{obtenerColorEstat(row.State)} width:300px;">
+							<td on:click={goto("/Containers/View/" + row.ID)}>{row.Names}</td>
+							<td on:click={goto("/Containers/View/" + row.ID)} style="{obtenerColorEstat(row.State)} width:300px;">
 								<div class="flex">
 									<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-circle-fill mr-1" viewBox="0 0 16 16">
 										<circle cx="8" cy="8" r="8"/>
@@ -52,8 +58,8 @@
 									{row.Status}
 								</div>
 							</td>
-							<td>{row.Networks}</td>
-							<td style="min-width:100px">
+							<td on:click={goto("/Containers/View/" + row.ID)}>{row.Networks}</td>
+							<td on:click={goto("/Containers/View/" + row.ID)} style="min-width:100px">
 								{#each convertirCadenaAArrayObjetos(row.Ports) as port}
 									<a class="flex" style="color: rgba(var(--color-primary-400));" href="{servidor ? "http://" + servidor.ip + ":" + port.portOrigen : ""}" target="_blank">
 										{port.portOrigen}:{port.portDesti}
@@ -64,8 +70,8 @@
 									</a>
 								{/each}
 							</td>
-							<td>{row.RunningFor}</td>
-							<td>{row.Size}</td>
+							<td on:click={goto("/Containers/View/" + row.ID)}>{row.RunningFor}</td>
+							<td on:click={goto("/Containers/View/" + row.ID)}>{row.Size}</td>
 							<td style="text-align: center; min-width:130px">
 								<div class="card p-4 variant-filled-secondary" data-popup="popupHover">
 									<p>Hover Content</p>
@@ -134,11 +140,15 @@
 </section>
 
 <script>
-	import PocketBase from 'pocketbase';
-	import { onMount } from "svelte";
+	import { onDestroy, onMount } from "svelte";
 	import { servidorActual } from '../../stores';
 	import { ProgressRadial, filter } from '@skeletonlabs/skeleton';
     import { DataHandler } from '@vincjo/datatables'
+	import { Toast, getToastStore } from '@skeletonlabs/skeleton';
+    import { pb } from '../../pocketbase'
+	import { goto } from '$app/navigation';
+
+    const toastStore = getToastStore();
 
 	const handler = new DataHandler([], { rowsPerPage: 50 });
     let rows = handler.getRows();
@@ -156,19 +166,12 @@
 
 	let valorFiltre = "";
 
-	const pb = new PocketBase('http://127.0.0.1:8090');
-
 	function runContainer(container) {
 		console.log("Running", container.ID)
 		if (servidor){
-			let index = list.findIndex(objeto => objeto.ID === container.ID);
-			if (index !== -1) {
-				list[index].State = "restarting"
-				list[index].Status = "Restarting (1) 0 Seconds"
-				list = list
-			}
 			container.State = "restarting"
-			container.Status = "Restarting (1) 0 Seconds"
+			container.Status = "Restarting..."
+			list = list
 			pb.send("/functions/" + servidor.id + "/container/" + container.ID + "/start", {
 				// for all possible options check
 				// https://developer.mozilla.org/en-US/docs/Web/API/fetch#options
@@ -183,12 +186,9 @@
 
 	function stopContainer(container) {
 		if (servidor){
-			let index = list.findIndex(objeto => objeto.ID === container.ID);
-			if (index !== -1) {
-				list[index].State = "paused"
-				list[index].Status = "Stoping (0)"
-				list = list
-			}
+			container.State = "paused"
+			container.Status = "Stoping..."
+			list = list
 			pb.send("/functions/" + servidor.id + "/container/" + container.ID + "/stop", {
 				// for all possible options check
 				// https://developer.mozilla.org/en-US/docs/Web/API/fetch#options
@@ -202,9 +202,16 @@
 	}
 
 
-
+	let intervalId
 	onMount(() => {
 		llistaContenidors();
+		intervalId = setInterval(() => {
+			if (servidor) llistaContenidors(servidor)
+		}, 5000);
+	})
+
+	onDestroy(() => {
+		clearInterval(intervalId);
 	})
 
 	let list = [];
@@ -218,11 +225,10 @@
 				// https://developer.mozilla.org/en-US/docs/Web/API/fetch#options
 			}).then((llista) => {
 				loading = false;
-				console.log(llista)
+				
 				try {
 					var jsonObject = JSON.parse(llista);
 					list = jsonObject.containers;
-					console.log("llista", list);
 				} catch (error) {
 					console.error("Error al parsear JSON:", error);
 				}
@@ -247,38 +253,37 @@
 		} else if (estat === 'dead') {
 			final = '--color-error-500';
 		}
-		console.log(final)
 		return "color: rgba(var(" + final + ") / 1);"
 	}
 
 	function convertirCadenaAArrayObjetos(cadena) {
-	if (cadena == ""){
-		return []
+		if (cadena == ""){
+			return []
+		}
+		// Separar los elementos por coma y flecha
+		let elementos = cadena.split(', ');
+
+		// Array para almacenar los objetos
+		let arrayObjetos = [];
+
+		// Iterar sobre cada elemento
+		elementos.forEach(elemento => {
+			// Separar el host y el contenedor por la flecha
+			let partes = elemento.split('->');
+
+			// Separar los puertos del host y el contenedor por el colon
+			let puertoHost = parseInt(partes[0].split(':')[1]);
+			let puertoContenedor = parseInt(partes[1].split(':')[0]);
+
+			// Crear el objeto con los datos extraídos y agregarlo al array
+			arrayObjetos.push({
+				portOrigen: puertoHost,
+				portDesti: puertoContenedor
+			});
+		});
+
+		return arrayObjetos;
 	}
-    // Separar los elementos por coma y flecha
-    let elementos = cadena.split(', ');
-
-    // Array para almacenar los objetos
-    let arrayObjetos = [];
-
-    // Iterar sobre cada elemento
-    elementos.forEach(elemento => {
-        // Separar el host y el contenedor por la flecha
-        let partes = elemento.split('->');
-
-        // Separar los puertos del host y el contenedor por el colon
-        let puertoHost = parseInt(partes[0].split(':')[1]);
-        let puertoContenedor = parseInt(partes[1].split(':')[0]);
-
-        // Crear el objeto con los datos extraídos y agregarlo al array
-        arrayObjetos.push({
-            portOrigen: puertoHost,
-            portDesti: puertoContenedor
-        });
-    });
-
-    return arrayObjetos;
-}
 
 </script>
 
@@ -315,8 +320,8 @@
 		z-index: 1;
 		width: 120px;
 		bottom: 100%;
-		left: 50%;
-		margin-left: -60px;
+		left: -100%;
+		margin-left: -140px;
 	}
 
 	/* Show the tooltip text when you mouse over the tooltip container */

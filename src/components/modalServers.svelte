@@ -60,6 +60,8 @@
     import PocketBase from 'pocketbase';
     import { getModalStore } from '@skeletonlabs/skeleton';
     import { popup } from '@skeletonlabs/skeleton';
+    import { pb } from '../pocketbase'
+
 
 	const drawerStore = getDrawerStore();
     const modalStore = getModalStore();
@@ -84,7 +86,6 @@
     };
 
     function eliminarServidor(id) {
-        const pb = new PocketBase('http://127.0.0.1:8090');
         pb.collection('server').delete(id);
     }
 			
