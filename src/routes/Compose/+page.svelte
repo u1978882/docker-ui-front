@@ -94,17 +94,11 @@
 										<svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi bi-play-fill" viewBox="0 0 16 16">
 											<path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393"/>
 										</svg>
-										<div class="tooltiptext">
-											Up compose
-										</div>
 									</button>
 									<button on:click={() => {downDockerCompose(row.id)}} type="button" class="btn-icon option tooltip">
 										<svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi bi-stop-fill" viewBox="0 0 16 16">
 											<path d="M5 3.5h6A1.5 1.5 0 0 1 12.5 5v6a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 11V5A1.5 1.5 0 0 1 5 3.5"/>
 										  </svg>
-										<div class="tooltiptext">
-											Down compose
-										</div>
 									</button>
 									<span class="divider-vertical" style="height: 25px;" />
 									<button on:click={() => {delDockerCompose(row.id)}} type="button" class="btn-icon option tooltip">
@@ -112,9 +106,6 @@
 											<path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
 											<path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
 										</svg>
-										<div class="tooltiptext">
-											Delete compose
-										</div>
 									</button>
 								</td>
 							</tr>
@@ -327,28 +318,4 @@
 	}
 
 
-
-	/* Tooltip text */
-	.tooltiptext {
-		visibility: hidden;
-		width: 300px;
-		background-color: rgba(var(--color-surface-700));
-		color: #fff;
-		text-align: center;
-		padding: 5px;
-		border-radius: 6px;
-		
-		/* Position the tooltip text - see examples below! */
-		position: absolute;
-		z-index: 1;
-		width: 120px;
-		bottom: 100%;
-		left: 50%;
-		margin-left: -60px;
-	}
-
-	/* Show the tooltip text when you mouse over the tooltip container */
-	.tooltip:hover .tooltiptext {
-		visibility: visible;
-	}
 </style>
