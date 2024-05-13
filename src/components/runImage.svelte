@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { SvelteComponent } from 'svelte';
+	import { onMount, type SvelteComponent } from 'svelte';
 
 	// Stores
 	import { getModalStore, getToastStore } from '@skeletonlabs/skeleton';
@@ -7,7 +7,6 @@
     import { servidorActual, setServidorActual, servers } from '../stores.js';
     import { pb } from '../pocketbase';
 	import { goto } from '$app/navigation';
-
 
     let servidor;
 	const unsubscribe = servidorActual.subscribe(value => {
@@ -52,7 +51,7 @@
                     } catch (error) {
                         console.error("Error al parsear JSON:", error);
                     }
-                }).catch((error, test) => {
+                }).catch((test) => {
                     console.log(test)
                 });
             }

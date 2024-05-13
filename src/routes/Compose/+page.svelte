@@ -126,7 +126,7 @@
 	import { getModalStore } from '@skeletonlabs/skeleton';
 	import { pb } from '../../pocketbase'
 	import { goto } from '$app/navigation';
-
+    import { page } from '$app/stores';
 
 	const modalStore = getModalStore();
 	const toastStore = getToastStore();

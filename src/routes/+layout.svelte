@@ -15,11 +15,7 @@
 	import {page} from '$app/stores'
     import { pb } from '../pocketbase'
 	import { goto } from '$app/navigation';
-
 	initializeStores();
-
-	export const ssr = false;
-
     
     hljs.registerLanguage('yaml', yaml);
 	hljs.registerLanguage('dockerfile', dockerfile);
@@ -45,9 +41,6 @@
 
 	import { getModalStore } from '@skeletonlabs/skeleton';
     const modalStore = getModalStore();
-
-
-	
 
 	let servidor;
 	const unsubscribe = servidorActual.subscribe(value => {
@@ -76,7 +69,7 @@
 	};
 
 	onMount(() => {
-		console.log($page.url.pathname);
+		console.log(window.location.origin);
 		pb.collection('server').unsubscribe('*')
 
 		pb.collection('server').getFullList({
@@ -127,6 +120,8 @@
 
 		// ...
 	};
+
+	export const ssr = false;
 
 </script>
 

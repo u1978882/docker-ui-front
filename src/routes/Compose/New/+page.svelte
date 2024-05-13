@@ -112,7 +112,7 @@
     import { pb } from '../../../pocketbase'
 	import { TabGroup, Tab, TabAnchor } from '@skeletonlabs/skeleton';
     import { goto } from '$app/navigation';
-
+    import { page } from '$app/stores';
 
     let servidor;
 	const unsubscribe = servidorActual.subscribe(value => {
