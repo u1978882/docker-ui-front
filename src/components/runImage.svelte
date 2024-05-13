@@ -42,7 +42,7 @@
                                 background: 'variant-filled-error',
                                 hideDismiss: true,
                                 message: 'Cannot run docker container: ' + jsonObject.resultat,
-                                timeout: 2000
+                                timeout: 6000
                             };
                             toastStore.trigger(t);
                         }
@@ -56,7 +56,7 @@
         }
 
     function runImage() {
-        let runString = $modalStore[0].meta.name + ":" + $modalStore[0].meta.tag
+        let runString = " " + $modalStore[0].meta.name + ":" + $modalStore[0].meta.tag + " "
         params.forEach(element => { runString += element.var + " " + element.val + " " });
         if (name) runString += " --name " + name + " "
         console.log(runString)
