@@ -239,7 +239,7 @@
 
 <Modal components={modalRegistry} />
 
-<Toast />
+<Toast zIndex={'z-[1000]'} />
 
 <style>
 	.main-container{

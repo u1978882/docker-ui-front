@@ -2,7 +2,18 @@
 	import type { SvelteComponent } from 'svelte';
 
 	// Stores
-	import { getModalStore } from '@skeletonlabs/skeleton';
+	import { getModalStore, getToastStore } from '@skeletonlabs/skeleton';
+
+    import { servidorActual, setServidorActual, servers } from '../stores.js';
+    import { pb } from '../pocketbase';
+	import { goto } from '$app/navigation';
+
+
+    let servidor;
+	const unsubscribe = servidorActual.subscribe(value => {
+		servidor = value;
+	});
+    const toastStore = getToastStore();
 
 	// Props
 	/** Exposes parent props to this component. */
@@ -16,17 +27,40 @@
     let name
     let params = [{var: "", val: ""}]
 
-    function paramsToString() {
-        let resultat = ""
-        params.forEach(element => {
-            resultat += element.var + " " + element.val + " "
-        });
-        return resultat;
-    }
+    function runContainer(runString) {
+            if (servidor){
+                pb.send("/functions/" + servidor.id + "/run/" + runString, {
+                    // for all possible options check
+                    // https://developer.mozilla.org/en-US/docs/Web/API/fetch#options
+                }).then((resultat) => {
+                    try {
+                        console.log(resultat);
+                        var jsonObject = JSON.parse(resultat);
+                        if (jsonObject.stat == "ok") goto("/Containers")
+                        else {
+                            const t = {
+                                background: 'variant-filled-error',
+                                hideDismiss: true,
+                                message: 'Cannot run docker container: ' + jsonObject.resultat,
+                                timeout: 2000
+                            };
+                            toastStore.trigger(t);
+                        }
+                    } catch (error) {
+                        console.error("Error al parsear JSON:", error);
+                    }
+                }).catch((error, test) => {
+                    console.log(test)
+                });
+            }
+        }
 
     function runImage() {
-        console.log(paramsToString())
-
+        let runString = $modalStore[0].meta.name + ":" + $modalStore[0].meta.tag
+        params.forEach(element => { runString += element.var + " " + element.val + " " });
+        if (name) runString += " --name " + name + " "
+        console.log(runString)
+        runContainer(runString)
     }
 
 </script>
