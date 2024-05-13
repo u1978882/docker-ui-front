@@ -38,7 +38,7 @@
                         var jsonObject = JSON.parse(resultat);
                         if (jsonObject.stat == "ok"){
                             goto("/Containers")
-                            parent.onClose
+                            parent.onClose()
                         } 
                         else {
                             const t = {
@@ -59,9 +59,10 @@
         }
 
     function runImage() {
-        let runString = " " + $modalStore[0].meta.name + ":" + $modalStore[0].meta.tag + " "
+        let runString = " "
         params.forEach(element => { runString += element.var + " " + element.val + " " });
         if (name) runString += " --name " + name + " "
+        runString += " " + $modalStore[0].meta.name + ":" + $modalStore[0].meta.tag + " "
         console.log(runString)
         runContainer(runString)
     }
@@ -93,16 +94,21 @@
             </h3>
             {#each params as param, index}
                 <div class="flex w-full mb-2">
-                    <label class="label mr-2">
-                        <span>Variable</span>
-                        <input bind:value={param.var} class="input variant-form-material" type="text" placeholder="Variable" />
-                    </label>
-                    <label class="label ml-2 mr-2">
-                        <span>Value</span>
-                        <input bind:value={param.val} class="input variant-form-material" type="text" placeholder="Value" />
-                    </label>
+                    {#if index == 0}
+                        <label class="label mr-2 w-64">
+                            <span>Variable</span>
+                            <input bind:value={param.var} class="input variant-form-material w-full" type="text" placeholder="Variable" />
+                        </label>
+                        <label class="label ml-2 mr-2 w-64 h-full">
+                            <span>Value</span>
+                            <input bind:value={param.val} class="input variant-form-material w-full" type="text" placeholder="Value" />
+                        </label>
+                    {:else}
+                        <input bind:value={param.var} style="height: 42px;" class="input variant-form-material mr-2 w-64" type="text" placeholder="Variable" />
+                        <input bind:value={param.val} style="height: 42px;"  class="input variant-form-material  ml-2 mr-2 w-64" type="text" placeholder="Value" />
+                    {/if}
                     {#if index == params.length-1 }
-                        <button on:click={() => {params.push({var: "", val: ""}); params = params}} type="button" class="btn mt-6">
+                        <button on:click={() => {params.push({var: "", val: ""}); params = params}} type="button" class="btn {index == 0 ? 'mt-6' : ''}">
                             <span>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16">
                                     <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2"/>
@@ -110,7 +116,7 @@
                             </span>
                         </button>
                     {:else}
-                        <button on:click={() => {params.splice(index, 1); params = params}} type="button" class="btn mt-6">
+                        <button on:click={() => {params.splice(index, 1); params = params}} type="button" class="btn {index == 0 ? 'mt-6' : ''}">
                             <span>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi bi-dash" viewBox="0 0 16 16">
                                     <path d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8"/>

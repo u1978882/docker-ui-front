@@ -255,7 +255,7 @@
 	function obtenerColorEstat(estat) {
 		var final = "--color-surface-300";
 		if (estat === 'created') {
-			final = '--color-surface-300';
+			final = '--color-warning-500';
 		} else if (estat === 'running') {
 			final = '--color-success-400';
 		} else if (estat === 'restarting' || estat === 'paused' ) {
