@@ -89,8 +89,9 @@
     import { TabGroup, Tab, TabAnchor } from '@skeletonlabs/skeleton';
     import { servidorActual, setServidorActual, servers } from '../stores.js';
     import { pb } from '../pocketbase'
+    import { page } from '$app/stores';
+	import { onMount } from "svelte";
 
-    import PocketBase from 'pocketbase';
 
     var modal = getModalStore();
     var drawer = getDrawerStore();

@@ -129,7 +129,7 @@
 	import { Toast, getToastStore } from '@skeletonlabs/skeleton';
     import { pb } from '../../pocketbase'
 	import { goto } from '$app/navigation';
-
+    import { page } from '$app/stores';
     const toastStore = getToastStore();
 
 	const handler = new DataHandler([], { rowsPerPage: 50 });

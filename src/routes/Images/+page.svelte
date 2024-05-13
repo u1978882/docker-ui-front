@@ -84,6 +84,7 @@
     import { pb } from '../../pocketbase'
 	import { getModalStore } from '@skeletonlabs/skeleton';
 	import { goto } from '$app/navigation';
+    import { page } from '$app/stores';
 
 	const modalStore = getModalStore();
 	const toastStore = getToastStore();
@@ -94,6 +95,7 @@
 	});
 
 	onMount(() => {
+		console.log(test)
 		llistaImatges();
 	})
 
