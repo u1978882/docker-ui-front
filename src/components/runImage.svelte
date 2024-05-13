@@ -36,7 +36,10 @@
                     try {
                         console.log(resultat);
                         var jsonObject = JSON.parse(resultat);
-                        if (jsonObject.stat == "ok") goto("/Containers")
+                        if (jsonObject.stat == "ok"){
+                            goto("/Containers")
+                            parent.onClose
+                        } 
                         else {
                             const t = {
                                 background: 'variant-filled-error',
