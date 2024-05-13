@@ -10,12 +10,6 @@
 		<input bind:value={valorFiltre} class="input variant-form-material w-64" />
 		<div class="flex-auto">
 		</div>
-		<button on:click={() => {llistaContenidors(servidor)}} type="button" class="btn variant-soft-primary mr-3">
-			<span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16">
-				<path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2"/>
-			  </svg></span>
-			<span>New</span>
-		</button>
 		<button on:click={() => {llistaContenidors(servidor)}} type="button" style="width:50px;" class="btn variant-soft-secondary p-2">
 			{#if loading}
 				<ProgressRadial width={'w-5'} value={undefined}/>
@@ -169,8 +163,26 @@
 			}).then((llista) => {
 				llistaContenidors(servidor);
 			}).catch(() => {
+				let objetoEncontrado = list.find(objeto => objeto.ID === container.ID);
+				objetoEncontrado.State = "dead"
+				objetoEncontrado.Status = "Exited..."
+				list = list.map(objeto => {
+					if (objeto.ID === container.ID) {
+						return objetoEncontrado; // Reemplazar el objeto si tiene el id buscado
+					} else {
+						return objeto; // Mantener el objeto sin cambios
+					}
+				});
+
+				const t = {
+                    background: 'variant-soft-error',
+                    hideDismiss: true,
+                    message: 'Error running docker container',
+                    timeout: 2000
+                };
+                toastStore.trigger(t);
 				loading = false;
-				list = [];
+				//list = [];
 			});
 		}
 	}
@@ -186,8 +198,15 @@
 			}).then((llista) => {
 				llistaContenidors(servidor);
 			}).catch(() => {
+				const t = {
+                    background: 'variant-soft-error',
+                    hideDismiss: true,
+                    message: 'Error stoping docker container',
+                    timeout: 2000
+                };
+                toastStore.trigger(t);
 				loading = false;
-				list = [];
+				//list = [];
 			});
 		}
 	}
@@ -207,10 +226,11 @@
 
 	let list = [];
 	let loading = false;
+	let firstTime = true;
 	$: llistaContenidors(servidor);
 	function llistaContenidors(servidor) {
 		if (servidor){
-			loading = true;
+			if (firstTime) loading = true
 			pb.send("/functions/containers/" + servidor.id, {
 				// for all possible options check
 				// https://developer.mozilla.org/en-US/docs/Web/API/fetch#options
@@ -251,29 +271,37 @@
 		if (cadena == ""){
 			return []
 		}
-		// Separar los elementos por coma y flecha
-		let elementos = cadena.split(', ');
 
-		// Array para almacenar los objetos
-		let arrayObjetos = [];
+		try {
+			let elementos = cadena.split(', ');
 
-		// Iterar sobre cada elemento
-		elementos.forEach(elemento => {
-			// Separar el host y el contenedor por la flecha
-			let partes = elemento.split('->');
+			// Array para almacenar los objetos
+			let arrayObjetos = [];
 
-			// Separar los puertos del host y el contenedor por el colon
-			let puertoHost = parseInt(partes[0].split(':')[1]);
-			let puertoContenedor = parseInt(partes[1].split(':')[0]);
+			// Iterar sobre cada elemento
+			elementos.forEach(elemento => {
+				// Separar el host y el contenedor por la flecha
+				let partes = elemento.split('->');
 
-			// Crear el objeto con los datos extraídos y agregarlo al array
-			arrayObjetos.push({
-				portOrigen: puertoHost,
-				portDesti: puertoContenedor
+				// Separar los puertos del host y el contenedor por el colon
+				let puertoHost = parseInt(partes[0].split(':')[1]);
+				let puertoContenedor = parseInt(partes[1].split(':')[0]);
+
+				// Crear el objeto con los datos extraídos y agregarlo al array
+				arrayObjetos.push({
+					portOrigen: puertoHost,
+					portDesti: puertoContenedor
+				});
 			});
-		});
 
-		return arrayObjetos;
+			return arrayObjetos;
+
+		} catch (error) {
+			return []
+		}
+		// Separar los elementos por coma y flecha
+
+
 	}
 
 </script>

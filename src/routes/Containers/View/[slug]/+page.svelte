@@ -2,11 +2,11 @@
     <ol class="breadcrumb mb-2">
         <li class="crumb"><a class="anchor" href="/Containers">Containers</a></li>
         <li class="crumb-separator" aria-hidden>/</li>
-        <li>{container.name}</li>
+        <li>{container.Name.substring(1)}</li>
     </ol>
     <div class="flex">
         <h1 class="h1">
-            {container.name}
+            {container.Name.substring(1)}
         </h1>
         <div class="grow"></div>
         <div class="btn-group">
@@ -28,8 +28,8 @@
                     </span>
                 </a>
             {/if}
-            {#if container.status == "running"}
-                <button on:click={() => {}} type="button" class="variant-soft-secondary p-1">
+            {#if container.State.Running}
+                <button on:click={() => {stopContainer()}} type="button" class="variant-soft-primary p-1">
                     <span>
                         <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi bi-stop-fill" viewBox="0 0 16 16">
                             <path d="M5 3.5h6A1.5 1.5 0 0 1 12.5 5v6a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 11V5A1.5 1.5 0 0 1 5 3.5"/>
@@ -37,7 +37,7 @@
                     </span>
                 </button>
             {:else}
-                <button on:click={() => {}} type="button" class="variant-soft-primary p-1">
+                <button on:click={() => {runContainer()}} type="button" class="variant-soft-primary p-1">
                     <span>
                         <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi bi-play-fill" viewBox="0 0 16 16">
                             <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393"/>
@@ -47,37 +47,81 @@
             {/if}
         </div>
     </div>
-        
+    <div class="mb-1 flex p-2 pl-0" style="{obtenerColorEstat(container.State.Status)}">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-circle-fill mr-1 mt-1" viewBox="0 0 16 16">
+            <circle cx="8" cy="8" r="8"/>
+        </svg>
+        {container.State.Status}
+    </div>
     <TabGroup>
+        <Tab bind:group={tabSet} name="tab2" value={1}>Logs</Tab>
         <Tab bind:group={tabSet} name="tab1" value={0}>
             <span>Files</span>
         </Tab>
-        <Tab bind:group={tabSet} name="tab2" value={1}>Logs</Tab>
         <Tab bind:group={tabSet} name="tab3" value={2}>Stats</Tab>
         <!-- Tab Panels --->
         <svelte:fragment slot="panel">
             {#if tabSet === 0}
-                <RecursiveTreeView nodes={fitxers} />
-                {#if errorDrets }
-                    <aside class="alert variant-ghost-error">
-                        <!-- Icon -->
-                        <div>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-exclamation-triangle-fill" viewBox="0 0 16 16">
-                                <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
-                              </svg>
+                <RecursiveTreeView on:click={mostraFile} nodes={fitxers} padding={'py-1 px-1 pl-2'}/>
+                {#if !carregant}
+                    {#if !container.State.Running}
+                        <div class="variant-ghost-error flex p-4 rounded">
+                            <!-- Icon -->
+                            <div class="mr-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-exclamation-triangle-fill" viewBox="0 0 16 16">
+                                    <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
+                                </svg>
+                            </div>
+                            <!-- Message -->
+                            <div class="">
+                                <h3 class="h3">Error</h3>
+                                <p>The docker container have to be running in order to view the files</p>
+                            </div>
+                            <!-- Actions -->
                         </div>
-                        <!-- Message -->
-                        <div class="alert-message">
-                            <h3 class="h3">Error</h3>
-                            <p>The docker user dont have permision to check the files</p>
-                        </div>
-                        <!-- Actions -->
-                    </aside>
+                    {:else}
+                        {#if errorDrets }
+                            <div class="variant-ghost-error flex p-4 rounded">
+                                <!-- Icon -->
+                                <div class="mr-4">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-exclamation-triangle-fill" viewBox="0 0 16 16">
+                                        <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
+                                    </svg>
+                                </div>
+                                <!-- Message -->
+                                <div class="">
+                                    <h3 class="h3">Error</h3>
+                                    <p>The docker user dont have permision to check the files</p>
+                                </div>
+                                <!-- Actions -->
+                            </div>
+                        {/if}
+                    {/if}
                 {/if}
             {:else if tabSet === 1}
-                (tab panel 2 contents)
+            <div class="card p-4" style="font-size: 15px;" bind:innerText={logs} contenteditable="false">
+            </div>
             {:else if tabSet === 2}
-                (tab panel 3 contents)
+                <div style="--json-tree-string-color: #42a5f5; /* Azul */
+                --json-tree-symbol-color: #42a5f5; /* Azul */
+                --json-tree-boolean-color: #42a5f5; /* Verde */
+                --json-tree-function-color: #42a5f5; /* Verde */
+                --json-tree-number-color: #42a5f5; /* Naranja */
+                --json-tree-label-color: #ffffff; /* Morado */
+                --json-tree-property-color: #ffffff; /* Negro */
+                --json-tree-arrow-color: #727272; /* Gris */
+                --json-tree-operator-color: #42a5f5; /* Gris */
+                --json-tree-null-color: #42a5f5; /* Gris */
+                --json-tree-undefined-color: #42a5f5; /* Gris */
+                --json-tree-date-color: #42a5f5; /* Gris */
+                --json-tree-internal-color: #42a5f5; /* Gris */
+                --json-tree-regex-color: #42a5f5;
+                --json-tree-font-size: 18px;
+                --json-tree-font-family: Inter, system-ui, sans-serif;
+                --json-tree-li-indentation: 1em;
+                --json-tree-li-line-height: 1.6;">
+                    <JSONTree value={container} />
+                </div>
             {/if}
         </svelte:fragment>
     </TabGroup>
@@ -89,14 +133,17 @@
 </section>
 
 <script>
-	import { onMount } from "svelte";
+	import { onDestroy, onMount } from "svelte";
     import { pb } from "../../../../pocketbase";
     import { servidorActual } from '../../../../stores';
     import { TabGroup, Tab, TabAnchor } from '@skeletonlabs/skeleton';
     import { TreeView, TreeViewItem, RecursiveTreeView } from '@skeletonlabs/skeleton';
     import { Toast, getToastStore } from '@skeletonlabs/skeleton';
+    import JSONTree from 'svelte-json-tree';
+    import { Modal, getModalStore } from '@skeletonlabs/skeleton';
+			
+    const modalStore = getModalStore();
 
-    
     let directoriObert = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-folder" viewBox="0 0 16 16"><path d="M.54 3.87.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3h3.982a2 2 0 0 1 1.992 2.181l-.637 7A2 2 0 0 1 13.174 14H2.826a2 2 0 0 1-1.991-1.819l-.637-7a2 2 0 0 1 .342-1.31zM2.19 4a1 1 0 0 0-.996 1.09l.637 7a1 1 0 0 0 .995.91h10.348a1 1 0 0 0 .995-.91l.637-7A1 1 0 0 0 13.81 4zm4.69-1.707A1 1 0 0 0 6.172 2H2.5a1 1 0 0 0-1 .981l.006.139q.323-.119.684-.12h5.396z"/></svg>'
     let directoriTencat = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-folder-fill" viewBox="0 0 16 16"><path d="M9.828 3h3.982a2 2 0 0 1 1.992 2.181l-.637 7A2 2 0 0 1 13.174 14H2.825a2 2 0 0 1-1.991-1.819l-.637-7a2 2 0 0 1 .342-1.31L.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3m-8.322.12q.322-.119.684-.12h5.396l-.707-.707A1 1 0 0 0 6.172 2H2.5a1 1 0 0 0-1 .981z"/></svg>'
     let fitxer = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file" viewBox="0 0 16 16"><path d="M4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm0 1h8a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1"/></svg>'
@@ -108,7 +155,7 @@
 		servidor = value;
 	});
 
-    let tabSet = 0;
+    let tabSet = 1;
 
     let unicId = 0;
     function getUnicId(){
@@ -116,45 +163,83 @@
     }
 
 
-    let container = {name: ""}
-
+    let container = {Name: "", State: {Running: false}}
+    let logs
     let id
     let errorDrets = false;
+    let carregant;
 
+    let intervalId
     onMount(() => {
         const ruta = window.location.href;
         const partes = ruta.split("/");
         id = partes[partes.length - 1];
-        errorDrets = false;
-        carregarFiles()
+        carregant = true;
         carregarContenidor()
+        carregarFiles()
+        carregarLogs()
+        intervalId = setInterval(() => {
+			if (servidor) carregarContenidor(servidor)
+			if (servidor) carregarLogs(servidor)
+		}, 5000);
     })
 
-    function carregarContenidor() {
+    onDestroy(() => {
+        clearInterval(intervalId);
+    })
 
+    $: carregarContenidor(servidor)
+    function carregarContenidor(ser) {
+        if (servidor && id){
+			pb.send("/functions/" + servidor.id + "/container/" + id + "/inspect", {
+				// for all possible options check
+				// https://developer.mozilla.org/en-US/docs/Web/API/fetch#options
+			}).then((resultat) => {
+                try {
+                    container = JSON.parse(resultat)[0]
+                    console.log(container)
+                } catch (error) {
+                    console.log(error)
+                }
+                carregant = false;
+			}).catch((error) => {
+                console.log(error)
+                carregant = false;
+			});
+		}
     }
+
+    $: carregarLogs(servidor)
+    function carregarLogs(ser) {
+        if (servidor && id){
+            const fechaActual = new Date();
+            const fechaHaceUnaSemana = new Date(fechaActual.getTime() - (7 * 24 * 60 * 60 * 1000));
+
+			pb.send("/functions/" + servidor.id + "/container/" + id + "/logs/" + fechaHaceUnaSemana.toISOString(), {
+				// for all possible options check
+				// https://developer.mozilla.org/en-US/docs/Web/API/fetch#options
+			}).then((resultat) => {
+                logs = resultat//.replace("\n", "</br>")
+			}).catch((error) => {
+                console.log(error)
+			});
+		}
+    }
+
 
     let fitxers = []
 
-    function createObjectsFromPath(path) {
+    function createObjectsFromPath(path, id) {
         const parts = path.split('/').filter(part => part !== '');
         if (parts.length === 0) return null;
-
-        const obj = { content: parts[0], children: [], id: getUnicId() };
-        let current = obj;
-
-        for (let i = 1; i < parts.length; i++) {
-            const child = { content: parts[i], children: [], id: getUnicId()};
-            current.children.push(child);
-            current = child;
-        }
+        const obj = { content: parts[0], children: [], id: id };
 
         return obj;
     }
 
     $: carregarFiles(servidor)
     function carregarFiles(serv) {
-        if (servidor){
+        if (servidor && id){
             console.log("list");
 			pb.send("/functions/" + servidor.id + "/container/" + id + "/list", {
 				// for all possible options check
@@ -166,33 +251,20 @@
                     const root = { id: "root", content: 'root', children: []}
                     // Recorrer cada línea
                     lineas.forEach(linea => {
-                        // Dividir la línea en partes
-                        const partes = linea.trim().split(/\s+/);
-                        let nombre = partes.pop(); // Sacar el último elemento que es el nombre
-                        const tamaño = partes.pop(); // Sacar el penúltimo elemento que es el tamaño
-
-                        // Reunir el resto de las partes en permisos, usuario, grupo y fecha
-                        const resto = partes.join(' ');
-                        const [permisos, usuario, grupo, fecha] = resto.split(/\s+/);
-
-                        // Crear el objeto y agregarlo al array
-                        if (usuario) {
-                            // permisos, usuario, grupo, tamaño, fecha, nombre
-                            nombre = nombre.trim()
-                            
-                            const parts = nombre.split('/');
-                            let current = root;
-                            for (let i = 0; i < parts.length; i++) {
-                                const existingChild = current.children.find(child => child.content === parts[i]);
-                                if (existingChild) {
-                                    current = existingChild;
-                                } else {
-                                    const newChild = createObjectsFromPath(parts.slice(i).join('/'));
-                                    current.children.push(newChild);
-                                    break;
-                                }
+                        let nombre = linea.trim()
+                        const parts = nombre.split('/');
+                        let current = root;
+                        for (let i = 0; i < parts.length; i++) {
+                            const existingChild = current.children.find(child => child.content === parts[i]);
+                            if (existingChild) {
+                                current = existingChild;
+                            } else {
+                                const newChild = createObjectsFromPath(parts.slice(i).join('/'), nombre);
+                                current.children.push(newChild);
+                                break;
                             }
                         }
+
                     });
                     console.log(root.children[0].children)
                     if (root.children[0].children) {
@@ -204,10 +276,109 @@
 				}
 			}).catch((error, test) => {
                 errorDrets = true
+                fitxers = []
 			});
 		}
     }
 
+    function mostraFile(fitxer) {
+        console.log(fitxer)
+        if (servidor && id){
+			pb.send("/functions/" + servidor.id + "/container/" + id + "/file/" + fitxer.detail.id, {
+				// for all possible options check
+				// https://developer.mozilla.org/en-US/docs/Web/API/fetch#options
+			}).then((resultat) => {
+                    // Data
+                    // title: fitxer.detail.id.split("/").pop(),
+                    // body: resultat.replaceAll("\n", '</br>'),
+                
+                const modal = {
+                    type: 'component',
+                    component: 'fileView',
+                    meta: {
+                        nom: fitxer.detail.id.split("/").pop(),
+                        content: resultat.replaceAll("\n", '</br>'),
+                    }
+                };
+                modalStore.trigger(modal);
+                console.log(resultat)
+			}).catch((error) => {
+                console.log(error)
+			});
+		}
+    }
+
+    function runContainer(container) {
+		if (servidor){
+			pb.send("/functions/" + servidor.id + "/container/" + id + "/start", {
+				// for all possible options check
+				// https://developer.mozilla.org/en-US/docs/Web/API/fetch#options
+			}).then((llista) => {
+                const t = {
+                    background: 'variant-soft-success',
+                    hideDismiss: true,
+                    message: 'Docker container running',
+                    timeout: 2000
+                };
+                toastStore.trigger(t);
+                carregarContenidor()
+                carregarFiles()
+                carregarLogs()
+			}).catch(() => {
+                const t = {
+                    background: 'variant-soft-error',
+                    hideDismiss: true,
+                    message: 'Error running docker container',
+                    timeout: 2000
+                };
+                toastStore.trigger(t);
+			});
+		}
+	}
+
+	function stopContainer(container) {
+		if (servidor){
+			pb.send("/functions/" + servidor.id + "/container/" + id + "/stop", {
+				// for all possible options check
+				// https://developer.mozilla.org/en-US/docs/Web/API/fetch#options
+			}).then((llista) => {
+                const t = {
+                    background: 'variant-soft-success',
+                    hideDismiss: true,
+                    message: 'Docker container stoped',
+                    timeout: 2000
+                };
+                toastStore.trigger(t);
+                carregarContenidor()
+                carregarFiles()
+                carregarLogs()
+			}).catch(() => {
+                const t = {
+                    background: 'variant-soft-error',
+                    hideDismiss: true,
+                    message: 'Error stoping docker container',
+                    timeout: 2000
+                };
+                toastStore.trigger(t);
+			});
+		}
+	}
+
+    function obtenerColorEstat(estat) {
+		var final = "--color-surface-300";
+		if (estat === 'created') {
+			final = '--color-surface-300';
+		} else if (estat === 'running') {
+			final = '--color-success-400';
+		} else if (estat === 'restarting' || estat === 'paused' ) {
+			final = '--color-warning-500';
+		} else if (estat === 'exited') {
+			final = '--color-surface-300';
+		} else if (estat === 'dead') {
+			final = '--color-error-500';
+		}
+		return "color: rgba(var(" + final + ") / 1);"
+	}
 
     function getBase64Pass(pass) {
         try {

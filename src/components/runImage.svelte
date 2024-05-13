@@ -1,0 +1,113 @@
+<script lang="ts">
+	import type { SvelteComponent } from 'svelte';
+
+	// Stores
+	import { getModalStore } from '@skeletonlabs/skeleton';
+
+	// Props
+	/** Exposes parent props to this component. */
+	export let parent: SvelteComponent;
+
+	const modalStore = getModalStore();
+
+	// Notes: Use `w-screen h-screen` to fit the visible canvas size.
+	const cBase = 'bg-surface-100-800-token w-screen h-screen p-4';
+
+    let name
+    let params = [{var: "", val: ""}]
+
+    function paramsToString() {
+        let resultat = ""
+        params.forEach(element => {
+            resultat += element.var + " " + element.val + " "
+        });
+        return resultat;
+    }
+
+    function runImage() {
+        console.log(paramsToString())
+
+    }
+
+</script>
+
+{#if $modalStore[0]}
+    <div class="w-modal scroll-auto bg-surface-100-800-token p-4 rounded">
+        <div class="sticky top-0">
+            <div class="flex h-full w-full mb-1">
+                <h1 class="h1">
+                    Run Image
+                </h1>
+                <div class="flex-auto"></div>
+                <button class="btn btn-icon option m-2" on:click={parent.onClose}>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                        <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+                        </svg>
+                </button>
+            </div>
+            <hr class="mb-3">
+            <label class="label mb-3">
+                <span>Container name</span>
+                <!-- svelte-ignore a11y-autofocus -->
+                <input bind:value={name} class="input variant-form-material" type="text" placeholder="Name"/>
+            </label>
+            <h3 class="h3 mb-2">
+                Environment variables
+            </h3>
+            {#each params as param, index}
+                <div class="flex w-full mb-2">
+                    <label class="label mr-2">
+                        <span>Variable</span>
+                        <input bind:value={param.var} class="input variant-form-material" type="text" placeholder="Variable" />
+                    </label>
+                    <label class="label ml-2 mr-2">
+                        <span>Value</span>
+                        <input bind:value={param.val} class="input variant-form-material" type="text" placeholder="Value" />
+                    </label>
+                    {#if index == params.length-1 }
+                        <button on:click={() => {params.push({var: "", val: ""}); params = params}} type="button" class="btn mt-6">
+                            <span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2"/>
+                                  </svg>
+                            </span>
+                        </button>
+                    {:else}
+                        <button on:click={() => {params.splice(index, 1); params = params}} type="button" class="btn mt-6">
+                            <span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi bi-dash" viewBox="0 0 16 16">
+                                    <path d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8"/>
+                                </svg>
+                            </span>
+                        </button>
+                    {/if}
+                </div>
+            {/each}
+            <hr class="mb-3 mt-4">
+            <div class="flex">
+                <div class="grow"></div>
+                <button on:click={parent.onClose} type="button" class="btn variant-soft-secondary mr-2">
+                    <span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                            <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+                          </svg>
+                    </span>
+                    <span>Cancel</span>
+                </button>
+                <button on:click={() => {runImage()}} type="button" class="btn variant-soft-primary">
+                    <span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-play-fill" viewBox="0 0 16 16">
+                            <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393"/>
+                          </svg>
+                    </span>
+                    <span>Run</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    <style>
+        .option:hover {
+            background-color: rgba(var(--color-surface-700));
+        }
+    </style>
+{/if}

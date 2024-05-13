@@ -114,10 +114,14 @@
 	})
 
 	import formulariCrearServidor from '../components/formulariCrearServidor.svelte'
+	import fileView from '../components/fileView.svelte'
+	import runImage from '../components/runImage.svelte'
 
 	const modalRegistry = {
 		// Set a unique modal ID, then pass the component reference
 		crearServidor: { ref: formulariCrearServidor },
+		fileView: { ref: fileView },
+		runImage: { ref: runImage },
 
 		// ...
 	};

@@ -36,11 +36,14 @@
   "type": "module",
   "dependencies": {
     "@floating-ui/dom": "1.6.3",
+    "@pgrabovets/json-view": "^2.7.5",
     "@valiantlynx/svelte-rich-text": "^0.2.8",
     "@xterm/xterm": "^5.5.0",
+    "@zerodevx/svelte-json-view": "^1.0.9",
     "highlight.js": "^11.9.0",
     "js-yaml": "^4.1.0",
     "pocketbase": "^0.21.2",
+    "svelte-json-tree": "^2.2.0",
     "svelte-table": "^0.6.3"
   }
 }

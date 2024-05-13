@@ -11,7 +11,7 @@
 		</div>
 		<div class="flex-auto"></div>
 		<div class="">
-			<button on:click={() => {modalPullImage(servidor)}} type="button" class="btn variant-filled-primary mb-4 p-2 mr-3">
+			<button on:click={() => {modalPullImage(servidor)}} type="button" class="btn variant-soft-primary mb-4 p-2 mr-3">
 				<span>
 					<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-cloud-arrow-down" viewBox="0 0 16 16">
 						<path fill-rule="evenodd" d="M7.646 10.854a.5.5 0 0 0 .708 0l2-2a.5.5 0 0 0-.708-.708L8.5 9.293V5.5a.5.5 0 0 0-1 0v3.793L6.354 8.146a.5.5 0 1 0-.708.708z"/>
@@ -24,7 +24,7 @@
 			</button>
 		</div>
 		<div class="">
-			<button on:click={() => {llistaImatges(servidor)}} type="button" class="btn variant-filled-primary mb-4 p-2">
+			<button on:click={() => {llistaImatges(servidor)}} type="button" class="btn variant-soft-secondary mb-4 p-2">
 				{#if loading}
 					<ProgressRadial width={'w-5'} value={undefined} />
 				{:else}
@@ -49,6 +49,7 @@
 					<th>Image Id</th>
 					<th>Created Since</th>
 					<th>Size</th>
+					<th  style="text-align: center;">Actions</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -59,6 +60,13 @@
 						<td>{row.ID}</td>
 						<td>{row.CreatedSince}</td>
 						<td>{row.Size}</td>
+						<td style="text-align: center; padding: 0px; vertical-align: middle;" class="p-0">
+							<button on:click={() => {runImage(row.ID, row.Repository, row.Tag)}} type="button" class="btn-icon option tooltip">
+								<svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi bi-play-fill" viewBox="0 0 16 16">
+									<path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393"/>
+								</svg>
+							</button>
+						</td>
 					</tr>
 				{/each}
 			</tbody>
@@ -149,4 +157,27 @@
 		modalStore.trigger(modal);
 	}
 
+	function runImage(id, name, tag){
+		const modal = {
+			type: 'component',
+			component: 'runImage',
+			meta: {
+				id: id,
+				name: name,
+				tag: tag,
+			}
+		};
+		modalStore.trigger(modal);
+	}
+
 </script>
+
+<style>
+	td {
+		vertical-align: middle;
+	}
+
+	.option:hover {
+		background-color: rgba(var(--color-surface-700));
+	}
+</style>
