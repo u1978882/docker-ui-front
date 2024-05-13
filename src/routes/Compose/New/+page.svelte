@@ -82,7 +82,7 @@
         <hr class="m-2 mt-4 mb-4">
         <div class="flex">
             <div class="flex-auto"></div>
-            <button on:click={() => {yaml = "\n"}} type="reset" class="btn variant-soft-secondary mr-3">
+            <button on:click={() => {yaml = "\n"}} type="reset" class="btn variant-filled-secondary mr-3">
                 <span>
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
                         <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
@@ -90,7 +90,7 @@
                 </span>
                 <span>Reset</span>
             </button>
-            <button type="submit" class="btn variant-soft-primary">
+            <button type="submit" class="btn variant-filled-primary">
                 <span>
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16">
                         <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2"/>
@@ -144,7 +144,7 @@
     function createCompose() {
         if (yaml == "\n") {
             const t = {
-                background: 'variant-soft-error',
+                background: 'variant-filled-error',
                 hideDismiss: true,
                 message: 'Need to input a valid YML File.',
                 timeout: 2000
@@ -165,7 +165,7 @@
                     console.log("funca")
                 }).catch((err) => {
                     const t = {
-                        background: 'variant-soft-error',
+                        background: 'variant-filled-error',
                         hideDismiss: true,
                         message: 'Error creating docker compose',
                         timeout: 2000
@@ -179,7 +179,7 @@
     function toastYMLNoValid() {
         yaml = "\n"
         const t = {
-            background: 'variant-soft-error',
+            background: 'variant-filled-error',
             hideDismiss: true,
             message: 'YML File not valid',
             timeout: 2000

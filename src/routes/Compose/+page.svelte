@@ -209,27 +209,27 @@
 
 	function delDockerCompose(id) {
 		const t = {
-			background: 'variant-soft-success',
+			background: 'variant-filled-success',
 			hideDismiss: true,
 			message: 'Deleting docker compose',
-			timeout: 2000
+			timeout: 6000
 		};
 		toastStore.trigger(t);
         pb.collection('docker_compose').delete(id)
         .then((record) => {
 			const t = {
-                background: 'variant-soft-success',
+                background: 'variant-filled-success',
 				hideDismiss: true,
                 message: 'Docker compose deleted successfully',
-                timeout: 2000
+                timeout: 6000
             };
             toastStore.trigger(t);
         }).catch(() => {
             const t = {
-                background: 'variant-soft-error',
+                background: 'variant-filled-error',
 				hideDismiss: true,
                 message: 'Cannot delete docker compose',
-                timeout: 2000
+                timeout: 6000
             };
             toastStore.trigger(t);
         });
@@ -238,10 +238,10 @@
 	function runCompose(compose) {
 		if (servidor){
 			const t = {
-				background: 'variant-soft-success',
+				background: 'variant-filled-success',
 				hideDismiss: true,
 				message: 'Starting docker compose',
-				timeout: 3000
+				timeout: 6000
 			};
 			toastStore.trigger(t);
 			pb.send("/functions/" + servidor.id + "/dockercompose/" + compose + "/up", {
@@ -254,10 +254,10 @@
 					if (jsonObject.stat == "ok") goto("/Containers")
 					else {
 						const t = {
-							background: 'variant-soft-error',
+							background: 'variant-filled-error',
 							hideDismiss: true,
 							message: 'Cannot start docker compose: ' + jsonObject.resultat,
-							timeout: 2000
+							timeout: 6000
 						};
 						toastStore.trigger(t);
 					}
@@ -273,10 +273,10 @@
 	function downDockerCompose(compose) {
 		if (servidor){
 			const t = {
-				background: 'variant-soft-success',
+				background: 'variant-filled-success',
 				message: 'Downing docker compose',
 				hideDismiss: true,
-				timeout: 3000
+				timeout: 6000
 			};
 			toastStore.trigger(t);
 			pb.send("/functions/" + servidor.id + "/dockercompose/" + compose + "/down", {
@@ -289,10 +289,10 @@
 					if (jsonObject.stat == "ok") goto("/Containers")
 					else {
 						const t = {
-							background: 'variant-soft-error',
+							background: 'variant-filled-error',
 							hideDismiss: true,
 							message: 'Cannot down docker compose: ' + jsonObject.resultat,
-							timeout: 2000
+							timeout: 6000
 						};
 						toastStore.trigger(t);
 					}

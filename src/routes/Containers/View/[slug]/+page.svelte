@@ -10,7 +10,7 @@
         </h1>
         <div class="grow"></div>
         <div class="btn-group">
-            <button on:click={() => {}} type="button" class="variant-soft-error p-1">
+            <button on:click={() => {delContenidors(container)}} type="button" class="variant-soft-error p-1">
                 <span>
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
                         <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
@@ -151,6 +151,8 @@
     import { Toast, getToastStore } from '@skeletonlabs/skeleton';
     import JSONTree from 'svelte-json-tree';
     import { Modal, getModalStore } from '@skeletonlabs/skeleton';
+    import { goto } from '$app/navigation';
+
 			
     const modalStore = getModalStore();
 
@@ -367,6 +369,33 @@
                     background: 'variant-soft-error',
                     hideDismiss: true,
                     message: 'Error stoping docker container',
+                    timeout: 2000
+                };
+                toastStore.trigger(t);
+			});
+		}
+	}
+
+    function delContenidors(cont) {
+		if (servidor){
+			pb.send("/functions/" + servidor.id + "/container/" + cont.Id + "/remove", {
+				// for all possible options check
+				// https://developer.mozilla.org/en-US/docs/Web/API/fetch#options
+			}).then((llista) => {
+				console.log(cont)
+                goto("/Containers")
+				const t = {
+                    background: 'variant-filled-success',
+                    hideDismiss: true,
+                    message: 'Container removed correctly',
+                    timeout: 2000
+                };
+                toastStore.trigger(t);
+			}).catch(() => {
+				const t = {
+                    background: 'variant-filled-error',
+                    hideDismiss: true,
+                    message: 'Error, cannot remove contaier',
                     timeout: 2000
                 };
                 toastStore.trigger(t);

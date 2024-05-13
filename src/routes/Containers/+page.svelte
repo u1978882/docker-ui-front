@@ -22,7 +22,7 @@
 		</button>
 	</div>
 
-	{#if !dockerDeamon}
+	{#if !dockerDeamon }
 		<div class="variant-ghost-error flex p-4 rounded">
 			<!-- Icon -->
 			<div class="mr-4">
@@ -100,7 +100,7 @@
 											</button>
 										{/if}
 										<span class="divider-vertical h-6" />
-										<button type="button" class="btn-icon option tooltip">
+										<button on:click={delContenidors(row)} type="button" class="btn-icon option tooltip">
 											<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
 												<path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
 												<path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
@@ -123,7 +123,7 @@
 
 <script>
 	import { onDestroy, onMount } from "svelte";
-	import { servidorActual } from '../../stores';
+	import { servers, servidorActual } from '../../stores';
 	import { ProgressRadial, filter } from '@skeletonlabs/skeleton';
     import { DataHandler } from '@vincjo/datatables'
 	import { Toast, getToastStore } from '@skeletonlabs/skeleton';
@@ -210,10 +210,11 @@
 	let intervalId
 	let dockerDeamon = true;
 	onMount(() => {
-		dockerDeamon = true;
 		llistaContenidors();
+		dockerDeamon = true;
 		intervalId = setInterval(() => {
 			if (servidor) llistaContenidors(servidor)
+			if (servidor) checkStatus(servidor)
 		}, 5000);
 	})
 
@@ -221,15 +222,27 @@
 		clearInterval(intervalId);
 	})
 
+	function checkStatus(serv) {
+		if (servidor) {
+			pb.send("/functions/dockerstatus/" + servidor.id, {
+				// for all possible options check
+				// https://developer.mozilla.org/en-US/docs/Web/API/fetch#options
+			}).then((llista) => {
+				dockerDeamon = true;
+			}).catch(() => {
+				dockerDeamon = false;
+			});
+		}
+	}
+
 	$: servChange(servidor);
 	function servChange(serv) {
-		console.log("Swaping server")
-		dockerDeamon = true;
+		checkStatus(serv)
 		list = [];
 	}
 
 	let list = [];
-	let loading = false;
+	let loading = true;
 	$: llistaContenidors(servidor);
 	function llistaContenidors(serv) {
 		if (servidor){
@@ -237,20 +250,47 @@
 				// for all possible options check
 				// https://developer.mozilla.org/en-US/docs/Web/API/fetch#options
 			}).then((llista) => {
-				dockerDeamon = true;
+				loading = false;
 				try {
 					var jsonObject = JSON.parse(llista);
 					list = jsonObject.containers;
+					console.log(llista)
 				} catch (error) {
 					console.error("Error al parsear JSON:", error);
 				}
 			}).catch(() => {
-				dockerDeamon = false;
+				loading = false;
 				list = [];
 			});
 		}
 	}
 
+	function delContenidors(cont) {
+		if (servidor){
+			pb.send("/functions/" + servidor.id + "/container/" + cont.ID + "/remove", {
+				// for all possible options check
+				// https://developer.mozilla.org/en-US/docs/Web/API/fetch#options
+			}).then((llista) => {
+				console.log(cont)
+				llistaContenidors(servidor)
+				const t = {
+                    background: 'variant-filled-success',
+                    hideDismiss: true,
+                    message: 'Container removed correctly',
+                    timeout: 2000
+                };
+                toastStore.trigger(t);
+			}).catch(() => {
+				const t = {
+                    background: 'variant-filled-error',
+                    hideDismiss: true,
+                    message: 'Error, cannot remove contaier',
+                    timeout: 2000
+                };
+                toastStore.trigger(t);
+			});
+		}
+	}
 
 	function obtenerColorEstat(estat) {
 		var final = "--color-surface-300";

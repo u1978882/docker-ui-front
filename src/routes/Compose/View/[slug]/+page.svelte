@@ -173,7 +173,7 @@
     function runDockerCompose(compose) {
 		if (servidor){
             const t = {
-                background: 'variant-soft-success',
+                background: 'variant-filled-success',
                 message: 'Starting docker compose up',
                 hideDismiss: true,
                 timeout: 3000
@@ -189,7 +189,7 @@
 					if (jsonObject.stat == "ok") goto("/Containers")
 					else {
 						const t = {
-							background: 'variant-soft-error',
+							background: 'variant-filled-error',
                             hideDismiss: true,
 							message: 'Cannot start docker compose: ' + jsonObject.resultat,
 							timeout: 2000
@@ -208,7 +208,7 @@
     function downDockerCompose(compose) {
 		if (servidor){
             const t = {
-                background: 'variant-soft-success',
+                background: 'variant-filled-success',
                 message: 'Downing docker compose',
                 hideDismiss: true,
                 timeout: 3000
@@ -224,7 +224,7 @@
 					if (jsonObject.stat == "ok") goto("/Containers")
 					else {
 						const t = {
-							background: 'variant-soft-error',
+							background: 'variant-filled-error',
                             hideDismiss: true,
 							message: 'Cannot down docker compose: ' + jsonObject.resultat,
 							timeout: 2000
@@ -246,7 +246,7 @@
             goto("/Compose")
         }).catch(() => {
             const t = {
-                background: 'variant-soft-error',
+                background: 'variant-filled-error',
                 hideDismiss: true,
                 message: 'Cannot delete docker compose',
                 timeout: 2000

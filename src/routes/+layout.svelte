@@ -18,6 +18,8 @@
 
 	initializeStores();
 
+	export const ssr = false;
+
     
     hljs.registerLanguage('yaml', yaml);
 	hljs.registerLanguage('dockerfile', dockerfile);

@@ -1,0 +1,30 @@
+services:
+  web:
+    container_name: web-frontend
+    image: docktopus-web
+    build:
+      context: .
+      dockerfile: ./docker/frontend/Dockerfile
+    user: "node"
+    environment:
+      - NODE_ENV=production
+      - TZ=Pacific/Auckland
+    env_file:
+      - .env
+    restart: unless-stopped
+    ports:
+      - 80:3000
+  api:
+    container_name: web-api
+    image: docktopus-api
+    build:
+      context: .
+      dockerfile: ./docker/backend/Dockerfile
+    restart: unless-stopped
+    ports:
+      - 8090:80
+  web-ssh:
+    container_name: web-ssh
+    image: darktohka/webssh-docker
+    ports:
+      - 8888:8080
