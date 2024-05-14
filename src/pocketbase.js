@@ -1,3 +1,3 @@
 import PocketBase from 'pocketbase';
-export let pb = new PocketBase('http://docktopus.duckdns.org:8090');
+export let pb = new PocketBase('http://arnauserverdocker.duckdns.org:8080');
 

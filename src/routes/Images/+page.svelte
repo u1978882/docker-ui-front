@@ -95,7 +95,7 @@
 	});
 
 	onMount(() => {
-		console.log(test)
+		//console.log(test)
 		llistaImatges();
 	})
 

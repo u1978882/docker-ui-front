@@ -1,8 +1,6 @@
-#Dockerfile
+FROM node:18-alpine AS external-website
 
-FROM node:18-alpine AS docktopus-web
-
-LABEL Developers="Lluis Vinent & Arnau Costa"
+LABEL Developers="Lluis Vinent i Arnau Costa"
 
 WORKDIR /app
 
